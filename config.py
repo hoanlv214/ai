@@ -85,11 +85,11 @@ class CFG:
     # ============================================================
     # MODEL - LightGBM (co the duoc Optuna tune)
     # ============================================================
-    LGB_N_ESTIMATORS = 500
+    LGB_N_ESTIMATORS = 1000        # Nhieu hon de early stopping co room
     LGB_MAX_DEPTH = 6
-    LGB_LEARNING_RATE = 0.05
+    LGB_LEARNING_RATE = 0.02        # Nho hon = hoc cham nhung tot hon
     LGB_NUM_LEAVES = 31
-    LGB_MIN_CHILD_SAMPLES = 50
+    LGB_MIN_CHILD_SAMPLES = 20      # Giam de model nhay hon
     LGB_SUBSAMPLE = 0.8
     LGB_COLSAMPLE = 0.8
     LGB_IS_UNBALANCE = True
@@ -98,7 +98,7 @@ class CFG:
     # ============================================================
     # BACKTEST & EVALUATE
     # ============================================================
-    PROB_THRESHOLD = 0.6
+    PROB_THRESHOLD = 0.53           # 0.6 qua cao khi model yeu -> 0 trades
     PROB_BINS = [
         (0.00, 0.40),
         (0.40, 0.45),
