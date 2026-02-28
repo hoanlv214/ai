@@ -162,10 +162,25 @@ def run_pipeline(df: pd.DataFrame = None,
         print(f"   F1:         {results['f1']:.4f}")
         print(f"   Time:       {elapsed:.1f}s")
         print()
-        print("   Khi dung model de du doan:")
-        print(f"     - Model noi UP (>50%): dung {metrics['precision']:.1%}")
-        print(f"     - Model noi UP >55%:   dung ~{bin_df[bin_df['bin'].str.contains('0.55')]['winrate'].values[0]:.1%}" if len(bin_df[bin_df['bin'].str.contains('0.55')]) > 0 else "")
-        print(f"     - Model noi DOWN (<45%): dung ~{100-bin_df[bin_df['bin'].str.contains('0.40')]['winrate'].values[0]*100:.1f}%" if len(bin_df[bin_df['bin'].str.contains('0.40')]) > 0 else "")
+
+        # Lay winrate theo bin chinh xac
+        bin_lookup = dict(zip(bin_df['bin'], bin_df['winrate']))
+        n_lookup = dict(zip(bin_df['bin'], bin_df['count']))
+
+        wr_up = bin_lookup.get('0.55-0.60', 0)
+        n_up = int(n_lookup.get('0.55-0.60', 0))
+        wr_down_raw = bin_lookup.get('0.40-0.45', 0)
+        n_down = int(n_lookup.get('0.40-0.45', 0))
+        wr_down = 1 - wr_down_raw  # prob UP < 45% => DOWN dung
+
+        print("   Huong dan su dung:")
+        print(f"     UP  confident (prob > 55%):  dung {wr_up:.1%} ({n_up:,} mau)")
+        print(f"     DOWN confident (prob < 45%): dung {wr_down:.1%} ({n_down:,} mau)")
+        print(f"     Uncertain (45-55%):          ~50% = KHONG NEN CHOI")
+        print()
+        print(f"   => Chi choi khi model tu tin (>55% hoac <45%)")
+        print(f"   => ~{(n_up+n_down)/len(y_test)*100:.0f}% thoi gian co signal, "
+              f"con lai nen cho")
         print("=" * 60)
 
     del test_df, X_test, y_test, y_proba, y_pred, lgb_model
